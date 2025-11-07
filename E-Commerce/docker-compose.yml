@@ -1,0 +1,39 @@
+version: "3.7"
+
+services:
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: sama
+      POSTGRES_PASSWORD: samaS1234
+      POSTGRES_DB: commerce_system
+    ports:
+      - "5432:5432"
+    networks:
+      - s-network
+    volumes:
+      - postgres-s-data:/var/lib/postgres/data
+
+
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/commerce_system
+      SPRING_DATASOURCE_USERNAME: sama
+      SPRING_DATASOURCE_PASSWORD: samaS1234
+      SPRING_JPA_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+    networks:
+      - s-network
+
+networks:
+  s-network:
+    driver: bridge
+
+volumes:
+  postgres-s-data:
